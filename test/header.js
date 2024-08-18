@@ -142,6 +142,16 @@ describe("headers", () => {
             expect(head.toJSON()).to.eql(headerdata);
         });
 
+        it("handles fileAttr when attr above 0x80000000", () => {
+            const attr = 0x81E80000;
+
+            const head = new centralHeader();
+            head.loadFromBinary(readBuf);
+            head.attr = attr;
+
+            expect(head.fileAttr).to.equal(0x01E8);
+        });
+
         it("read binary and create new binary from it, they have to be equal", () => {
             const head = new centralHeader();
             head.loadFromBinary(readBuf);
