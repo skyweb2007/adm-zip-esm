@@ -1,8 +1,8 @@
-const ZipEntry = require("./zipEntry");
-const Headers = require("./headers");
-const Utils = require("./util");
+import ZipEntry from "./zipEntry.js"
+import Headers from "./headers/index.js"
+import Utils from "./util/index.js"
 
-module.exports = function (/*Buffer|null*/ inBuffer, /** object */ options) {
+export default function (/*Buffer|null*/ inBuffer, /** object */ options) {
     var entryList = [],
         entryTable = {},
         _comment = Buffer.alloc(0),

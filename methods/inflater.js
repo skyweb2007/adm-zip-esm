@@ -1,7 +1,6 @@
+import zlib from "zlib"
 const version = +(process.versions ? process.versions.node : "").split(".")[0] || 0;
-
-module.exports = function (/*Buffer*/ inbuf, /*number*/ expectedLength) {
-    var zlib = require("zlib");
+export default function (/*Buffer*/ inbuf, /*number*/ expectedLength) {
     const option = version >= 15 && expectedLength > 0 ? { maxOutputLength: expectedLength } : {};
 
     return {

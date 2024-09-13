@@ -1,5 +1,12 @@
-module.exports = require("./utils");
-module.exports.Constants = require("./constants");
-module.exports.Errors = require("./errors");
-module.exports.FileAttr = require("./fattr");
-module.exports.decoder = require("./decoder");
+import Utils from "./utils.js"
+import Constants from "./constants.js"
+import Errors from "./errors.js"
+import FileAttr from "./fattr.js"
+import decoder from "./decoder.js"
+
+Utils.Constants = Constants
+Utils.Errors = Errors
+Utils.FileAttr = FileAttr
+Utils.decoder = decoder
+
+export { Utils as default }

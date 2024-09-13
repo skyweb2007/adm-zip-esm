@@ -1,7 +1,8 @@
-const assert = require("assert");
-const path = require("path");
-const Zip = require("../../adm-zip");
-const rimraf = require("rimraf");
+import assert, { fail, equal } from "assert";
+import { join } from "path";
+import Zip from "../../adm-zip.js";
+import rimraf from "rimraf";
+const __dirname = import.meta.dirname
 
 describe("crc", () => {
     const destination = __dirname + "/xxx";
@@ -9,7 +10,7 @@ describe("crc", () => {
     beforeEach((done) => rimraf(destination, done));
 
     it("Good CRC", (done) => {
-        const goodZip = new Zip(path.join(__dirname, "good_crc.zip"));
+        const goodZip = new Zip(join(__dirname, "good_crc.zip"));
         const entries = goodZip.getEntries();
         assert(entries.length === 1, "Good CRC: Test archive contains exactly 1 file");
 
@@ -27,7 +28,7 @@ describe("crc", () => {
     });
 
     it("Bad CRC - async method returns err string", (done) => {
-        const badZip = new Zip(path.join(__dirname, "bad_crc.zip"));
+        const badZip = new Zip(join(__dirname, "bad_crc.zip"));
         const entries = badZip.getEntries();
         assert(entries.length === 1, "Bad CRC: Test archive contains exactly 1 file");
 
@@ -45,7 +46,7 @@ describe("crc", () => {
     });
 
     it("Bad CRC - sync method throws an error object", (done) => {
-        const badZip = new Zip(path.join(__dirname, "bad_crc.zip"));
+        const badZip = new Zip(join(__dirname, "bad_crc.zip"));
         const entries = badZip.getEntries();
         const testFile = entries.filter(function (entry) {
             return entry.entryName === "lorem_ipsum.txt";
@@ -59,17 +60,17 @@ describe("crc", () => {
             done();
             return;
         }
-        assert.fail("Bad CRC: did not throw exception");
+        fail("Bad CRC: did not throw exception");
     });
 
     it("CRC is not changed after re-created", () => {
-        const goodZip = new Zip(path.join(__dirname, "good_crc.zip"));
+        const goodZip = new Zip(join(__dirname, "good_crc.zip"));
         const original = goodZip.getEntries()[0].header.crc;
-        assert.equal(original, 3528145192);
+        equal(original, 3528145192);
         const newZipPath = destination + "/good_crc_new.zip";
         goodZip.writeZip(newZipPath);
         const newZip = new Zip(newZipPath);
         const actual = newZip.getEntries()[0].header.crc;
-        assert.equal(actual, original);
+        equal(actual, original);
     });
 });

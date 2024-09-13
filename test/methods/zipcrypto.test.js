@@ -1,10 +1,11 @@
 "use strict";
-const { expect } = require("chai");
-const { decrypt, encrypt, _salter } = require("../../methods/zipcrypto");
-const { crc32 } = require("../../util/utils");
-
+import { expect } from "chai";
+import ZipCrypto from "../../methods/zipcrypto.js";
+import Utils from "../../util/utils.js";
 // node crypto
-const { createHash } = require("crypto");
+import { createHash } from "crypto";
+const { decrypt, encrypt, _salter } = ZipCrypto
+const { crc32 } = Utils
 
 describe("method - zipcrypto", () => {
     describe("zipcrypto decrypt", () => {

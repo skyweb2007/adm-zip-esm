@@ -1,9 +1,9 @@
-const { expect } = require("chai");
+import  { expect } from "chai"
 //const Attr = require("../util").FileAttr;
-const Zip = require("../adm-zip");
-const pth = require("path");
-const fs = require("fs");
-const rimraf = require("rimraf");
+import Zip from "../adm-zip.js"
+import pth from "path"
+import fs from "fs"
+import rimraf from "rimraf"
 
 describe("adm-zip", () => {
     const destination = "./test/xxx";

@@ -1,7 +1,8 @@
 "use strict";
-const { expect } = require("chai");
-const { crc32, canonical, sanitize, zipnamefix } = require("../util/utils");
-const pth = require("path");
+import { expect } from "chai"
+import Utils from "../util/utils.js"
+import pth from "path"
+const { crc32, canonical, sanitize, zipnamefix } = Utils
 
 describe("utils", () => {
     describe("crc32 function", () => {

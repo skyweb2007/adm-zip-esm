@@ -1,17 +1,19 @@
 "use strict";
 
-const assert = require("assert");
-const path = require("path");
-const Zip = require("../../adm-zip");
-const Errors = require("../../util/errors");
+import { throws } from "assert";
+import { join } from "path";
+import Zip from "../../adm-zip.js";
+import Errors from "../../util/errors.js";
+const { DISK_ENTRY_TOO_LARGE } = Errors;
+const __dirname = import.meta.dirname
 
 describe("read zip file header with invalid large number of entries", () => {
     it("throws too large error", () => {
         // this zip file reports 2147483648 disk entry count which is impossible
-        const zip = new Zip(path.join(__dirname, "../assets/large_directory_size.zip"));
+        const zip = new Zip(join(__dirname, "../assets/large_directory_size.zip"));
         // assert that the following call throws an exception
-        assert.throws(() => {
+        throws(() => {
             zip.getEntries();
-        }, Errors.DISK_ENTRY_TOO_LARGE());
+        }, DISK_ENTRY_TOO_LARGE());
     });
 });

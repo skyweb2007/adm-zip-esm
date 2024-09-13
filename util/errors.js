@@ -58,6 +58,8 @@ function E(message) {
 }
 
 // Init errors with template
+const templatedErrors = {}
 for (const msg of Object.keys(errors)) {
-    exports[msg] = E(errors[msg]);
+    templatedErrors[msg] = E(errors[msg]);
 }
+export { templatedErrors as default }

@@ -1,13 +1,13 @@
-const { expect } = require("chai");
+import { expect } from "chai";
 //const Attr = require("../util").FileAttr;
-const Zip = require("../../adm-zip");
-const pth = require("path");
-const fs = require("fs");
-const rimraf = require("rimraf");
-const Utils = require("../../util/utils");
+import Zip from "../../adm-zip.js";
+import { normalize, join, sep, resolve, basename, dirname } from "path";
+import fs, { readdirSync, statSync, writeFileSync } from "fs";
+import rimraf from "rimraf";
+import Utils from "../../util/utils.js";
 
 describe("adm-zip.js - methods handling local files", () => {
-    const wrapList = (c) => pth.normalize(pth.join(destination, c));
+    const wrapList = (c) => normalize(join(destination, c));
     const destination = "./test/xxx";
     const testFileFolderList = [
         { name: "subfolder1/subfolder2/zipEntry1.txt", content: "zipEntry1" },
@@ -132,7 +132,7 @@ describe("adm-zip.js - methods handling local files", () => {
             zip.extractAllTo(destination);
             const files = walk(destination);
 
-            expect(files.sort()).to.deep.equal([pth.normalize("./test/xxx/lorem.txt")]);
+            expect(files.sort()).to.deep.equal([normalize("./test/xxx/lorem.txt")]);
         });
     });
 
@@ -347,7 +347,7 @@ describe("adm-zip.js - methods handling local files", () => {
         it("zip.addLocalFolder(destination, '', filter)", () => {
             const zip = new Zip();
             const filter = function (str) {
-                return str.slice(-1) === pth.sep;
+                return str.slice(-1) === sep;
             };
             zip.addLocalFolder(destination, "", filter);
             zip.toBuffer();
@@ -379,8 +379,8 @@ describe("adm-zip.js - methods handling local files", () => {
                         return function (err, done) {
                             if (err) next(err, false);
 
-                            const localPath = pth.resolve(destination, file);
-                            const comment = pth.basename(file);
+                            const localPath = resolve(destination, file);
+                            const comment = basename(file);
 
                             zip.addLocalFileAsync({ localPath, comment, zipPath }, function (err, done) {
                                 if (err) next(err, false);
@@ -396,7 +396,7 @@ describe("adm-zip.js - methods handling local files", () => {
                         const zip1Comment = zip.getEntries().map((e) => e.comment);
 
                         const expected1 = list1;
-                        const expected2 = list1.map((n) => pth.basename(n));
+                        const expected2 = list1.map((n) => basename(n));
 
                         expect(zip1Entries.sort()).to.deep.equal(expected1.sort());
                         expect(zip1Comment.sort()).to.deep.equal(expected2.sort());
@@ -558,7 +558,7 @@ describe("adm-zip.js - methods handling local files", () => {
         it("zip.addLocalFolderAsync2({localPath, filter}, callback)", (done) => {
             const zip = new Zip();
             const filter = function (str) {
-                return str.slice(-1) === pth.sep;
+                return str.slice(-1) === sep;
             };
             zip.addLocalFolderAsync2({ localPath: destination, filter }, (error) => {
                 if (error) done(false);
@@ -643,16 +643,16 @@ describe("adm-zip.js - methods handling local files", () => {
 
 function walk(dir) {
     let results = [];
-    const list = fs.readdirSync(dir);
+    const list = readdirSync(dir);
     list.forEach(function (file) {
         file = dir + "/" + file;
-        const stat = fs.statSync(file);
+        const stat = statSync(file);
         if (stat && stat.isDirectory()) {
             /* Recurse into a subdirectory */
             results = results.concat(walk(file));
         } else {
             /* Is a file */
-            results.push(pth.normalize(file));
+            results.push(normalize(file));
         }
     });
     return results;
@@ -662,12 +662,12 @@ function genFiles(list, location) {
     const utils = new Utils({ fs });
 
     for (const el of list) {
-        const path = pth.resolve(location, el.name);
+        const path = resolve(location, el.name);
         if (el.name.slice(-1) === "/") {
             utils.makeDir(path);
         } else {
-            utils.makeDir(pth.dirname(path));
-            fs.writeFileSync(path, el.content, "utf8");
+            utils.makeDir(dirname(path));
+            writeFileSync(path, el.content, "utf8");
         }
     }
 }

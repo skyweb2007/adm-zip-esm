@@ -1,9 +1,9 @@
-var Utils = require("./util"),
-    Headers = require("./headers"),
-    Constants = Utils.Constants,
-    Methods = require("./methods");
+import Utils from "./util/index.js"
+import Headers from "./headers/index.js"
+import Methods from "./methods/index.js"
+const Constants = Utils.Constants
 
-module.exports = function (/** object */ options, /*Buffer*/ input) {
+export default function (/** object */ options, /*Buffer*/ input) {
     var _centralHeader = new Headers.EntryHeader(),
         _entryName = Buffer.alloc(0),
         _comment = Buffer.alloc(0),

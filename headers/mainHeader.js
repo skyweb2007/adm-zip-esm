@@ -1,8 +1,8 @@
-var Utils = require("../util"),
-    Constants = Utils.Constants;
+import Utils from "../util/index.js"
+const Constants = Utils.Constants
 
 /* The entries in the end of central directory */
-module.exports = function () {
+export default function () {
     var _volumeEntries = 0,
         _totalEntries = 0,
         _size = 0,

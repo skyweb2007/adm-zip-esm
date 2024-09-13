@@ -1,7 +1,7 @@
-const Utils = require("./util");
-const pth = require("path");
-const ZipEntry = require("./zipEntry");
-const ZipFile = require("./zipFile");
+import pth from "path"
+import Utils from "./util/index.js"
+import ZipEntry from "./zipEntry.js"
+import ZipFile from "./zipFile.js"
 
 const get_Bool = (...val) => Utils.findLast(val, (c) => typeof c === "boolean");
 const get_Str = (...val) => Utils.findLast(val, (c) => typeof c === "string");
@@ -18,7 +18,7 @@ const defaultOptions = {
     fs: null
 };
 
-module.exports = function (/**String*/ input, /** object */ options) {
+export default function (/**String*/ input, /** object */ options) {
     let inBuffer = null;
 
     // create object based default options, allowing them to be overwritten
@@ -485,7 +485,7 @@ module.exports = function (/**String*/ input, /** object */ options) {
         addLocalFolderAsync2: function (options, callback) {
             const self = this;
             options = typeof options === "object" ? options : { localPath: options };
-            localPath = pth.resolve(fixPath(options.localPath));
+            const localPath = pth.resolve(fixPath(options.localPath));
             let { zipPath, filter, namefix } = options;
 
             if (filter instanceof RegExp) {

@@ -1,9 +1,6 @@
-"use strict";
-
 // node crypt, we use it for generate salt
-// eslint-disable-next-line node/no-unsupported-features/node-builtins
-const { randomFillSync } = require("crypto");
-const Errors = require("../util/errors");
+import { randomFillSync } from "crypto"
+import Errors from "../util/errors.js"
 
 // generate CRC32 lookup table
 const crctable = new Uint32Array(256).map((t, crc) => {
@@ -172,4 +169,4 @@ function encrypt(/*Buffer*/ data, /*Object*/ header, /*String, Buffer*/ pwd, /*B
     return encrypter(data, result, 12);
 }
 
-module.exports = { decrypt, encrypt, _salter };
+export default { decrypt, encrypt, _salter } 

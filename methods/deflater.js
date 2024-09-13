@@ -1,8 +1,7 @@
-module.exports = function (/*Buffer*/ inbuf) {
-    var zlib = require("zlib");
+import zlib from "zlib"
 
+export default function (/*Buffer*/ inbuf) {
     var opts = { chunkSize: (parseInt(inbuf.length / 1024) + 1) * 1024 };
-
     return {
         deflate: function () {
             return zlib.deflateRawSync(inbuf, opts);

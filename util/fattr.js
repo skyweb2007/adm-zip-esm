@@ -1,6 +1,6 @@
-const pth = require("path");
+import pth from "path"
 
-module.exports = function (/*String*/ path, /*Utils object*/ { fs }) {
+export default function (/*String*/ path, /*Utils object*/ { fs }) {
     var _path = path || "",
         _obj = newAttr(),
         _stat = null;

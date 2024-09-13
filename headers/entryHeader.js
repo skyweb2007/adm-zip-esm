@@ -1,8 +1,8 @@
-var Utils = require("../util"),
-    Constants = Utils.Constants;
+import Utils from "../util/index.js"
+const Constants = Utils.Constants
 
 /* The central directory file header */
-module.exports = function () {
+export default function () {
     var _verMade = 20, // v2.0
         _version = 10, // v1.0
         _flags = 0,

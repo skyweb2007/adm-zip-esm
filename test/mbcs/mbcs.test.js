@@ -1,12 +1,13 @@
-const assert = require("assert");
-const pth = require("path");
-const Zip = require("../../adm-zip");
-const rimraf = require("rimraf");
-const iconv = require("iconv-lite");
+import assert from "assert";
+import { resolve, join } from "path";
+import Zip from "../../adm-zip.js";
+import rimraf from "rimraf";
+import iconvLite from "iconv-lite"
+const _encode = iconvLite.encode, _decode = iconvLite.decode
 
 describe("Multibyte Character Sets in Filename", () => {
-    const destination = pth.resolve("./test/xxx");
-    const asset1 = pth.resolve("./test/mbcs/", "chs_name.zip");
+    const destination = resolve("./test/xxx");
+    const asset1 = resolve("./test/mbcs/", "chs_name.zip");
 
     // clean up folder content
     afterEach((done) => rimraf(destination, done));
@@ -15,8 +16,8 @@ describe("Multibyte Character Sets in Filename", () => {
     it("ascii filename and chinese content", (done) => {
         const encoding = "ascii";
         const decoder = {
-            encode: (data) => iconv.encode(data, encoding),
-            decode: (data) => iconv.decode(data, encoding)
+            encode: (data) => _encode(data, encoding),
+            decode: (data) => _decode(data, encoding)
         };
 
         const content = "测试文本\ntest text";
@@ -24,9 +25,9 @@ describe("Multibyte Character Sets in Filename", () => {
         const zip1 = new Zip({ decoder });
         zip1.addFile("ascii.txt", content);
         zip1.addFile("test/ascii.txt", content);
-        zip1.writeZip(pth.join(destination, "00-ascii.zip"));
+        zip1.writeZip(join(destination, "00-ascii.zip"));
 
-        const zip2 = new Zip(pth.join(destination, "00-ascii.zip"), { decoder });
+        const zip2 = new Zip(join(destination, "00-ascii.zip"), { decoder });
         const text = zip2.readAsText("ascii.txt");
         assert(text === content, text);
         done();
@@ -35,8 +36,8 @@ describe("Multibyte Character Sets in Filename", () => {
     it("add files with chinese filename into new zip", (done) => {
         const encoding = "gbk";
         const decoder = {
-            encode: (data) => iconv.encode(data, encoding),
-            decode: (data) => iconv.decode(data, encoding)
+            encode: (data) => _encode(data, encoding),
+            decode: (data) => _decode(data, encoding)
         };
 
         const content = "文件内容";
@@ -45,9 +46,9 @@ describe("Multibyte Character Sets in Filename", () => {
         const zip1 = new Zip({ decoder });
         zip1.addFile(file, content);
         zip1.addFile("test/" + file, content);
-        zip1.writeZip(pth.join(destination, "01-chs_name.zip"));
+        zip1.writeZip(join(destination, "01-chs_name.zip"));
 
-        const zip2 = new Zip(pth.join(destination, "01-chs_name.zip"), { decoder });
+        const zip2 = new Zip(join(destination, "01-chs_name.zip"), { decoder });
         const text = zip2.readAsText(file);
         assert(text === content, text);
         done();
@@ -56,8 +57,8 @@ describe("Multibyte Character Sets in Filename", () => {
     it("fetch file with chinese filename (gbk) in existing zip", (done) => {
         const encoding = "gbk";
         const decoder = {
-            encode: (data) => iconv.encode(data, encoding),
-            decode: (data) => iconv.decode(data, encoding)
+            encode: (data) => _encode(data, encoding),
+            decode: (data) => _decode(data, encoding)
         };
 
         let tZip = new Zip(asset1, { decoder });
@@ -72,8 +73,8 @@ describe("Multibyte Character Sets in Filename", () => {
     it("add file with chinese filename into existing zip", (done) => {
         const encoding = "gbk";
         const decoder = {
-            encode: (data) => iconv.encode(data, encoding),
-            decode: (data) => iconv.decode(data, encoding)
+            encode: (data) => _encode(data, encoding),
+            decode: (data) => _decode(data, encoding)
         };
 
         const content = "文件内容";
@@ -82,9 +83,9 @@ describe("Multibyte Character Sets in Filename", () => {
 
         let zip1 = new Zip(asset1, { decoder });
         zip1.addFile(file1, content);
-        zip1.writeZip(pth.join(destination, "02-chs_name.zip"));
+        zip1.writeZip(join(destination, "02-chs_name.zip"));
 
-        const zip2 = new Zip(pth.join(destination, "02-chs_name.zip"), { decoder });
+        const zip2 = new Zip(join(destination, "02-chs_name.zip"), { decoder });
         const text1 = zip2.readAsText(file1);
         assert(text1 === content, text1);
 
@@ -97,15 +98,15 @@ describe("Multibyte Character Sets in Filename", () => {
     it("read and keep entry.extra while write zip", () => {
         const encoding = "gbk";
         const decoder = {
-            encode: (data) => iconv.encode(data, encoding),
-            decode: (data) => iconv.decode(data, encoding)
+            encode: (data) => _encode(data, encoding),
+            decode: (data) => _decode(data, encoding)
         };
 
         let zip1 = new Zip(asset1, { decoder });
         let entry1 = zip1.getEntry("中文路径.txt", "gbk");
-        zip1.writeZip(pth.join(destination, "03-chs_name_clone.zip"));
+        zip1.writeZip(join(destination, "03-chs_name_clone.zip"));
 
-        let zip2 = new Zip(pth.join(destination, "03-chs_name_clone.zip"), { decoder });
+        let zip2 = new Zip(join(destination, "03-chs_name_clone.zip"), { decoder });
         let entry2 = zip2.getEntry("中文路径.txt");
         assert(entry1.extra.equals(entry2.extra));
 
@@ -118,9 +119,9 @@ describe("Multibyte Character Sets in Filename", () => {
         let zip1 = new Zip();
         zip1.addFile("測試.txt", "測試");
         zip1.addFile("test/測試.txt", "測試");
-        zip1.writeZip(pth.join(destination, "04-cht_name.zip"));
+        zip1.writeZip(join(destination, "04-cht_name.zip"));
 
-        let zip2 = new Zip(pth.join(destination, "04-cht_name.zip"));
+        let zip2 = new Zip(join(destination, "04-cht_name.zip"));
         let entry = zip2.getEntry("測試.txt");
         const text = zip2.readAsText(entry);
         assert(text === "測試", text);
@@ -132,18 +133,18 @@ describe("Multibyte Character Sets in Filename", () => {
     it("add files with chinese filename (Big5) into new zip", (done) => {
         const encoding = "big5";
         const decoder = {
-            encode: (data) => iconv.encode(data, encoding),
-            decode: (data) => iconv.decode(data, encoding)
+            encode: (data) => _encode(data, encoding),
+            decode: (data) => _decode(data, encoding)
         };
 
-        const content = iconv.encode("測試", encoding); // buffer
+        const content = _encode("測試", encoding); // buffer
 
         let zip1 = new Zip({ decoder });
         zip1.addFile("測試.txt", content);
         zip1.addFile("test/測試.txt", content);
-        zip1.writeZip(pth.join(destination, "05-cht_name_big5.zip"));
+        zip1.writeZip(join(destination, "05-cht_name_big5.zip"));
 
-        const zip2 = new Zip(pth.join(destination, "05-cht_name_big5.zip"), { decoder });
+        const zip2 = new Zip(join(destination, "05-cht_name_big5.zip"), { decoder });
         const entry = zip2.getEntry("測試.txt");
         const bufdata = zip2.readFile(entry);
         //console.log(entry.toJSON())
@@ -161,9 +162,9 @@ describe("Multibyte Character Sets in Filename", () => {
         const zip1 = new Zip();
         zip1.addFile(file, content);
         zip1.addFile("test/" + file, content);
-        zip1.writeZip(pth.join(destination, "06-jp_name.zip"));
+        zip1.writeZip(join(destination, "06-jp_name.zip"));
 
-        const zip2 = new Zip(pth.join(destination, "06-jp_name.zip"));
+        const zip2 = new Zip(join(destination, "06-jp_name.zip"));
         const text1 = zip2.readAsText(file);
         assert(text1 === content, text1);
         const entry2 = zip2.getEntry("./test/" + file);
@@ -176,19 +177,19 @@ describe("Multibyte Character Sets in Filename", () => {
     it("add files with japanese filename (EUC-JP) into new zip", (done) => {
         const encoding = "EUC-JP";
         const decoder = {
-            encode: (data) => iconv.encode(data, encoding),
-            decode: (data) => iconv.decode(data, encoding)
+            encode: (data) => _encode(data, encoding),
+            decode: (data) => _decode(data, encoding)
         };
 
         const file = "にほんご.txt";
-        const content = iconv.encode("にほんご", encoding); // buffer
+        const content = _encode("にほんご", encoding); // buffer
 
         const zip1 = new Zip({ decoder });
         zip1.addFile(file, content);
         zip1.addFile("test/" + file, content);
-        zip1.writeZip(pth.join(destination, "07-jp_name.zip"));
+        zip1.writeZip(join(destination, "07-jp_name.zip"));
 
-        const zip2 = new Zip(pth.join(destination, "07-jp_name.zip"), { decoder });
+        const zip2 = new Zip(join(destination, "07-jp_name.zip"), { decoder });
         let entry1 = zip2.getEntry(file);
         let bufdata1 = zip2.readFile(entry1);
         assert(bufdata1.equals(content));
@@ -203,20 +204,20 @@ describe("Multibyte Character Sets in Filename", () => {
     it("add files with japanese filename (Shift_JIS) into new zip", (done) => {
         const encoding = "Shift_JIS";
         const decoder = {
-            encode: (data) => iconv.encode(data, encoding),
-            decode: (data) => iconv.decode(data, encoding)
+            encode: (data) => _encode(data, encoding),
+            decode: (data) => _decode(data, encoding)
         };
 
         const file = "にほんご.txt";
         const content = "にほんご";
-        const bufdata = iconv.encode(content, "utf16le"); // buffer
+        const bufdata = _encode(content, "utf16le"); // buffer
 
         const zip1 = new Zip({ decoder });
         zip1.addFile(file, bufdata);
         zip1.addFile("test/" + file, bufdata);
-        zip1.writeZip(pth.join(destination, "08-jp_name.zip"));
+        zip1.writeZip(join(destination, "08-jp_name.zip"));
 
-        const zip2 = new Zip(pth.join(destination, "08-jp_name.zip"), { decoder });
+        const zip2 = new Zip(join(destination, "08-jp_name.zip"), { decoder });
         let text1 = zip2.readAsText(file, "utf16le");
         assert(text1 === content, text1);
         let text2 = zip2.readAsText("test/" + file, "utf16le");
@@ -232,9 +233,9 @@ describe("Multibyte Character Sets in Filename", () => {
         const zip1 = new Zip();
         zip1.addFile(file, content);
         zip1.addFile("test/" + file, content);
-        zip1.writeZip(pth.join(destination, "09-heb_name.zip"));
+        zip1.writeZip(join(destination, "09-heb_name.zip"));
 
-        const zip2 = new Zip(pth.join(destination, "09-heb_name.zip"));
+        const zip2 = new Zip(join(destination, "09-heb_name.zip"));
         const text1 = zip2.readAsText(file);
         assert(text1 === content, text1);
         const entry2 = zip2.getEntry("./test/" + file);
@@ -247,20 +248,20 @@ describe("Multibyte Character Sets in Filename", () => {
     it("add files with hebrew filename (win1255) into new zip", (done) => {
         const encoding = "win1255";
         const decoder = {
-            encode: (data) => iconv.encode(data, encoding),
-            decode: (data) => iconv.decode(data, encoding)
+            encode: (data) => _encode(data, encoding),
+            decode: (data) => _decode(data, encoding)
         };
 
         const file = "שפה עברית.txt";
         const content = "יונה לבנה קטנה עפה מעל אנגליה";
-        const bufdata = iconv.encode(content, "utf16le"); // buffer
+        const bufdata = _encode(content, "utf16le"); // buffer
 
         const zip1 = new Zip({ decoder });
         zip1.addFile(file, bufdata);
         zip1.addFile("test/" + file, bufdata);
-        zip1.writeZip(pth.join(destination, "10-heb_name.zip"));
+        zip1.writeZip(join(destination, "10-heb_name.zip"));
 
-        const zip2 = new Zip(pth.join(destination, "10-heb_name.zip"), { decoder });
+        const zip2 = new Zip(join(destination, "10-heb_name.zip"), { decoder });
         let text1 = zip2.readAsText(file, "utf16le");
         assert(text1 === content, text1);
         let text2 = zip2.readAsText("test/" + file, "utf16le");
@@ -272,20 +273,20 @@ describe("Multibyte Character Sets in Filename", () => {
     it("add files with bulgarian filename (win1251) into new zip", (done) => {
         const encoding = "win1251";
         const decoder = {
-            encode: (data) => iconv.encode(data, encoding),
-            decode: (data) => iconv.decode(data, encoding)
+            encode: (data) => _encode(data, encoding),
+            decode: (data) => _decode(data, encoding)
         };
 
         const file = "Български.txt";
         const content = "Приключенията на таралежа";
-        const bufdata = iconv.encode(content, "utf16le"); // buffer
+        const bufdata = _encode(content, "utf16le"); // buffer
 
         const zip1 = new Zip({ decoder });
         zip1.addFile(file, bufdata);
         zip1.addFile("test/" + file, bufdata);
-        zip1.writeZip(pth.join(destination, "11-bul_name.zip"));
+        zip1.writeZip(join(destination, "11-bul_name.zip"));
 
-        const zip2 = new Zip(pth.join(destination, "11-bul_name.zip"), { decoder });
+        const zip2 = new Zip(join(destination, "11-bul_name.zip"), { decoder });
         let entry1 = zip2.getEntry(file);
         let text1 = zip2.readAsText(entry1, "utf16le");
         assert(text1 === content, text1);
@@ -301,14 +302,14 @@ describe("Multibyte Character Sets in Filename", () => {
     it("add files with Unicode symbols filename (utf8) into new zip", (done) => {
         const file = "Symbols⌛🙈🙉.txt";
         const content = "♜♞♝♛♚♝♞♜\n♟♟♟♟♟♟♟♟\n♙♙♙♙♙♙♙♙\n♖♘♗♕♔♗♘♖";
-        const bufdata = iconv.encode(content, "utf16le"); // buffer
+        const bufdata = _encode(content, "utf16le"); // buffer
 
         const zip1 = new Zip();
         zip1.addFile(file, bufdata);
         zip1.addFile("test/" + file, bufdata);
-        zip1.writeZip(pth.join(destination, "12-sym_name.zip"));
+        zip1.writeZip(join(destination, "12-sym_name.zip"));
 
-        const zip2 = new Zip(pth.join(destination, "12-sym_name.zip"));
+        const zip2 = new Zip(join(destination, "12-sym_name.zip"));
         let entry1 = zip2.getEntry(file);
         let text1 = zip2.readAsText(entry1, "utf16le");
         assert(text1 === content, text1);
