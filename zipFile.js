@@ -95,7 +95,7 @@ export default function (/*Buffer|null*/ inBuffer, /** object */ options) {
         if (trailingSpace) max = 0;
 
         for (i; i >= n; i--) {
-            if (inBuffer[i] !== 0x50) continue; // quick check that the byte is 'P'
+            if (inBuffer[i] !== Utils.Constants.SIGFIRST) continue; // quick check that the byte is 'P'
             if (inBuffer.readUInt32LE(i) === Utils.Constants.ENDSIG) {
                 // "PK\005\006"
                 endOffset = i;

@@ -1,5 +1,6 @@
 export default {
     /* The local file header */
+    SIGFIRST         : 0x50, 
     LOCHDR           : 30, // LOC header size
     LOCSIG           : 0x04034b50, // "PK\003\004"
     LOCVER           : 4,	// version needed to extract
